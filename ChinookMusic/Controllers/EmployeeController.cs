@@ -42,27 +42,26 @@ namespace ChinookMusic.Controllers
         }
 
 
+        #region Edit Employee
         // GET: Employee/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            EmployeeRepository empRepo = new EmployeeRepository();
+            Employee emp = empRepo.GetEmployeeById(id);
+            ViewBag.ReportsToOptions = empRepo.GetAllEmployees();
+            return View(emp);
         }
 
         // POST: Employee/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult Edit(Employee emp)
         {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            EmployeeRepository empRepo = new EmployeeRepository();
+            //empRepo.UpdateEmployee(emp);
+            empRepo.UpdateEmployeeStoredProc(emp);
+            return RedirectToAction("Index");
         }
+        #endregion
 
         // GET: Employee/Delete/5
         public ActionResult Delete(int id)

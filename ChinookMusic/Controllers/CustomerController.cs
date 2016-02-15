@@ -22,7 +22,9 @@ namespace ChinookMusic.Controllers
         // GET: Customer/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            CustomerRepository repo = new CustomerRepository();
+            Customer cust = repo.GetCustomerById(id);
+            return View(cust);
         }
 
         // GET: Customer/Create
@@ -61,27 +63,22 @@ namespace ChinookMusic.Controllers
                 return View();
             }
         }
-
+        [HttpGet]
         // GET: Customer/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            CustomerRepository repo = new CustomerRepository();
+            Customer c = repo.GetCustomerById(id);
+            return View(c);
         }
 
         // POST: Customer/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete([Bind(Include = "CustomerId")]Customer cust)
         {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            CustomerRepository repo = new CustomerRepository();
+            repo.DeleteCustomer((int)cust.CustomerId);
+            return RedirectToAction("Index");
         }
     }
 }

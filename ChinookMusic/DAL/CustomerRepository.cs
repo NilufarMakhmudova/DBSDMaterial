@@ -177,5 +177,77 @@ namespace ChinookMusic.DAL
                 }
             }
         }
+        public Customer GetCustomerById(int id) {
+            Customer cus = new Customer();
+            using (DbConnection conn = new SqlConnection(ConnectionStr))
+            {
+                using (DbCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT [CustomerId]
+                                              ,[FirstName]
+                                              ,[LastName]
+                                              ,[Company]
+                                              ,[Address]
+                                              ,[City]
+                                              ,[State]
+                                              ,[Country]
+                                              ,[PostalCode]
+                                              ,[Phone]
+                                              ,[Fax]
+                                              ,[Email]
+                                              ,[SupportRepId]
+                                          FROM [dbo].[Customer]
+                                          WHERE [CustomerId]=@Id";
+                    DbParameter pCusId = cmd.CreateParameter();
+                    pCusId.DbType = System.Data.DbType.Int32;
+                    pCusId.ParameterName = "@Id";
+                    pCusId.Value = id;
+                    cmd.Parameters.Add(pCusId);
+                    conn.Open();
+                    using (DbDataReader rdr = cmd.ExecuteReader())
+                    {
+                        while (rdr.Read())
+                        {
+                            Customer c = new Customer()
+                            {
+                                CustomerId = rdr.GetInt32(0),
+                                FirstName = rdr.GetString(1),
+                                LastName = rdr.GetString(2),
+                                Company = rdr.IsDBNull(3) ? null : rdr.GetString(3),
+                                Address = rdr.IsDBNull(4) ? null : rdr.GetString(4),
+                                City = rdr.IsDBNull(5) ? null : rdr.GetString(5),
+                                State = rdr.IsDBNull(6) ? null : rdr.GetString(6),
+                                Country = rdr.IsDBNull(7) ? null : rdr.GetString(7),
+                                PostalCode = rdr.IsDBNull(8) ? null : rdr.GetString(8),
+                                Phone = rdr.IsDBNull(9) ? null : rdr.GetString(9),
+                                Fax = rdr.IsDBNull(10) ? null : rdr.GetString(10),
+                                Email = rdr.GetString(11),
+                                SupportRepId = rdr.GetInt32(12)
+                            };
+                            cus= c;
+                        }
+                    }
+                }
+            }
+            return cus;
+        }
+        public void DeleteCustomer(int cusId) {
+            using (DbConnection conn = new SqlConnection(ConnectionStr))
+            {
+                using (DbCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM [dbo].[Customer]
+                                               WHERE [CustomerId]=@Id";
+                   
+                    DbParameter pId = cmd.CreateParameter();
+                    pId.DbType = System.Data.DbType.Int32;
+                    pId.ParameterName = "@Id";
+                    pId.Value = cusId;
+                    cmd.Parameters.Add(pId);
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
